@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Career Finder Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(-45deg,#667eea,#764ba2,#6a11cb,#2575fc);
+  background-size:400% 400%;
+  animation:bg 10s infinite;
+  color:white;
+  text-align:center;
+}
+@keyframes bg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+.screen{display:none;padding:30px;animation:fade 0.5s}
+.active{display:block}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1}
+}
+
+.box{
+  background:white;
+  color:black;
+  padding:20px;
+  border-radius:20px;
+  max-width:420px;
+  margin:auto;
+}
+
+.option{
+  border:2px solid #667eea;
+  padding:12px;
+  margin:10px 0;
+  border-radius:12px;
+  cursor:pointer;
+  transition:0.3s;
+}
+.option:hover{background:#667eea;color:white;transform:scale(1.05)}
+.selected{background:#667eea;color:white}
+
+button{
+  padding:12px;
+  width:100%;
+  margin-top:15px;
+  border-radius:12px;
+  border:none;
+  background:#667eea;
+  color:white;
+}
+
+/* PROGRESS CIRCLE */
+.circle{
+  width:120px;height:120px;border-radius:50%;
+  background:conic-gradient(#00c6ff 0deg,#ddd 0deg);
+  margin:20px auto;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;
+}
+
+/* GRID OPTIONS */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+/* CAREER CARDS */
+.career{
+  background:white;color:black;
+  padding:12px;border-radius:12px;margin:10px;
+  cursor:pointer;transition:0.3s;
+}
+.career:hover{transform:scale(1.05)}
+
+/* ROADMAP */
+.step{display:flex;align-items:center;margin:15px 0}
+.dot{width:12px;height:12px;background:#667eea;border-radius:50%;margin-right:10px}
+.line{width:2px;height:25px;background:#667eea;margin-left:5px}
+
+</style>
+</head>
+
+<body>
+
+<h1>🚀 Career Finder Pro</h1>
+<div class="circle" id="progress">0%</div>
+
+<!-- HOME -->
+<div id="home" class="screen active">
+  <button onclick="next('q1',10)">Start</button>
+</div>
+
+<!-- Q1 -->
+<div id="q1" class="screen">
+<div class="box">
+<h3>1️⃣ Interests?</h3>
+<div class="grid">
+<div class="option" onclick="select(this,'tech')">💻 Tech</div>
+<div class="option" onclick="select(this,'arts')">🎬 Arts</div>
+<div class="option" onclick="select(this,'sports')">⚽ Sports</div>
+<div class="option" onclick="select(this,'business')">💼 Business</div>
+<div class="option" onclick="select(this,'science')">🧪 Science</div>
+<div class="option" onclick="select(this,'govt')">⚖️ Govt</div>
+</div>
+<button onclick="next('q2',25)">Next</button>
+</div>
+</div>
+
+<!-- Q2 -->
+<div id="q2" class="screen">
+<div class="box">
+<h3>2️⃣ Skills?</h3>
+<div class="grid">
+<div class="option" onclick="select(this,'tech')">Coding</div>
+<div class="option" onclick="select(this,'design')">Creative</div>
+<div class="option" onclick="select(this,'business')">Leadership</div>
+<div class="option" onclick="select(this,'sports')">Physical</div>
+<div class="option" onclick="select(this,'science')">Analytical</div>
+<div class="option" onclick="select(this,'arts')">Performing</div>
+</div>
+<button onclick="next('q3',40)">Next</button>
+</div>
+</div>
+
+<!-- Q3 -->
+<div id="q3" class="screen">
+<div class="box">
+<h3>3️⃣ Work style?</h3>
+<div class="grid">
+<div class="option" onclick="select(this,'tech')">Office</div>
+<div class="option" onclick="select(this,'sports')">Field</div>
+<div class="option" onclick="select(this,'arts')">Creative</div>
+<div class="option" onclick="select(this,'business')">Management</div>
+</div>
+<button onclick="next('q4',60)">Next</button>
+</div>
+</div>
+
+<!-- Q4 -->
+<div id="q4" class="screen">
+<div class="box">
+<h3>4️⃣ Goal?</h3>
+<div class="grid">
+<div class="option" onclick="select(this,'business')">Money</div>
+<div class="option" onclick="select(this,'govt')">Service</div>
+<div class="option" onclick="select(this,'science')">Research</div>
+<div class="option" onclick="select(this,'arts')">Fame</div>
+</div>
+<button onclick="showCareers()">Finish</button>
+</div>
+</div>
+
+<!-- CAREERS -->
+<div id="careers" class="screen">
+<h2>🎯 Choose Career</h2>
+<div id="list"></div>
+</div>
+
+<!-- ROADMAP -->
+<div id="roadmap" class="screen">
+<h2>🗺️ Career Path</h2>
+<div id="map"></div>
+<button onclick="location.reload()">Restart</button>
+</div>
+
+<script>
+
+let scores={tech:0,design:0,business:0,sports:0,arts:0,science:0,govt:0};
+
+function next(id,p){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+
+document.getElementById("progress").innerText=p+"%";
+document.getElementById("progress").style.background=
+`conic-gradient(#00c6ff ${p*3.6}deg,#ddd 0deg)`;
+}
+
+function select(el,type){
+scores[type]++;
+el.parentNode.querySelectorAll(".option").forEach(e=>e.classList.remove("selected"));
+el.classList.add("selected");
+}
+
+function showCareers(){
+
+let sorted=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+let top=sorted.slice(0,3).map(e=>e[0]);
+
+let map={
+tech:["Software Dev","AI Engineer","App Dev"],
+design:["UI/UX","Designer"],
+business:["Entrepreneur","Marketing"],
+sports:["Athlete","Trainer"],
+arts:["Actor","Creator"],
+science:["Doctor","Scientist"],
+govt:["IAS","Police"]
+};
+
+let html="";
+top.forEach(c=>{
+map[c].forEach(x=>{
+html+=`<div class="career" onclick="road('${c}')">${x}</div>`;
+});
+});
+
+document.getElementById("list").innerHTML=html;
+next("careers",80);
+}
+
+function road(c){
+
+let r={
+tech:["Learn coding","Projects","Internship","Job"],
+design:["Learn tools","Portfolio","Freelance","Job"],
+business:["Marketing","Networking","Startup"],
+sports:["Practice","Coaching","Competition"],
+arts:["Practice","Content","Audience"],
+science:["Study","Degree","Career"],
+govt:["Prep","Exams","Job"]
+};
+
+let html="";
+r[c].forEach((s,i)=>{
+html+=`
+<div class="step"><div class="dot"></div>${s}</div>
+${i<r[c].length-1?'<div class="line"></div>':''}
+`;
+});
+
+document.getElementById("map").innerHTML=html;
+next("roadmap",100);
+}
+
+</script>
+
+</body>
+</html>
